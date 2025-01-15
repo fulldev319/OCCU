@@ -71,6 +71,7 @@ This project is a full-stack web application that displays a set of status value
    ```bash
    npm run dev
    ```
+4. The backend will run at **http://locahost:3001**.
 
 ### Backend Setup
 
@@ -96,7 +97,7 @@ This project is a full-stack web application that displays a set of status value
 
 1. Status Page:
    - Visit **http://localhost:3000/** to view the list of 37 status values.
-2. CRUD Page:
+2. CRUD Data Page:
    - Visit **http://localhost:3000/data** to manage the dataset.
 
 ### API Endpoints
