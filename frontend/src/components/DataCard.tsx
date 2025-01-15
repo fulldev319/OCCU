@@ -1,0 +1,64 @@
+import React from "react";
+import { Paper, Typography, Button, Box } from "@mui/material";
+import { Data } from "./DataGrid";
+
+interface DataCardProps {
+  data: Data;
+  onEdit: (data: Data) => void;
+  onCopy: (data: Data) => void;
+  onDelete: (id: number) => void;
+}
+
+const DataCard: React.FC<DataCardProps> = ({
+  data,
+  onEdit,
+  onCopy,
+  onDelete,
+}) => {
+  return (
+    <Paper
+      elevation={3}
+      sx={{
+        p: 2,
+        textAlign: "center",
+        borderRadius: "8px",
+        transition: "transform 0.3s",
+        "&:hover": {
+          transform: "scale(1.05)",
+        },
+      }}
+    >
+      <Typography variant="h6">{data.name}</Typography>
+      <Typography variant="body2">Field 1: {data.field1}</Typography>
+      <Typography variant="body2">Field 2: {data.field2}</Typography>
+      <Typography variant="body2">Field 3: {data.field3}</Typography>
+      <Typography variant="caption">
+        Updated: {new Date(data.timestamp).toLocaleString()}
+      </Typography>
+      <Box
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-evenly",
+        }}
+      >
+        <Button size="small" onClick={() => onEdit(data)} sx={{ mt: 1 }}>
+          Edit
+        </Button>
+        <Button size="small" onClick={() => onCopy(data)} sx={{ mt: 1, ml: 1 }}>
+          Copy
+        </Button>
+        <Button
+          size="small"
+          color="error"
+          onClick={() => onDelete(data.id)}
+          sx={{ mt: 1, ml: 1 }}
+        >
+          Delete
+        </Button>
+      </Box>
+    </Paper>
+  );
+};
+
+export default DataCard;

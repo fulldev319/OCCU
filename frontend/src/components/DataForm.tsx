@@ -1,79 +1,105 @@
-import React, { useState } from "react";
-import { TextField, Button, Paper } from "@mui/material";
-import { createData, updateData, fetchAllData } from "../services/api";
+import React from "react";
+import {
+  TextField,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  Box,
+} from "@mui/material";
+import { Data } from "./DataGrid";
 
 interface DataFormProps {
-  data?: any;
-  onSubmit: () => void;
+  open: boolean;
+  onClose: () => void;
+  onSubmit: (data: Partial<Data>) => void;
+  editingData: Data | null;
 }
 
-const DataForm: React.FC<DataFormProps> = ({ data, onSubmit }) => {
-  const [formData, setFormData] = useState(
-    data || { name: "", field1: "", field2: "", field3: "" }
-  );
-  const [error, setError] = useState<string>("");
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+const DataForm: React.FC<DataFormProps> = ({
+  open,
+  onClose,
+  onSubmit,
+  editingData,
+}) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const allData = await fetchAllData();
-    const isNameDuplicate = allData.some(
-      (item: any) => item.name === formData.name && item.id !== data?.id
-    );
-
-    if (isNameDuplicate) {
-      setError("Name must be unique.");
-      return;
-    }
-
-    if (data) {
-      await updateData(data.id, formData);
-    } else {
-      await createData(formData);
-    }
-    onSubmit();
+    const formData = new FormData(e.currentTarget as HTMLFormElement);
+    const data = {
+      name: formData.get("name"),
+      field1: formData.get("field1"),
+      field2: formData.get("field2"),
+      field3: formData.get("field3"),
+    };
+    onSubmit(data as Partial<Data>);
   };
 
   return (
-    <Paper>
-      <form onSubmit={handleSubmit}>
-        <TextField
-          name="name"
-          label="Name"
-          value={formData.name}
-          onChange={handleChange}
-          fullWidth
-          error={!!error}
-          helperText={error}
-        />
-        <TextField
-          name="field1"
-          label="Field 1"
-          value={formData.field1}
-          onChange={handleChange}
-          fullWidth
-        />
-        <TextField
-          name="field2"
-          label="Field 2"
-          value={formData.field2}
-          onChange={handleChange}
-          fullWidth
-        />
-        <TextField
-          name="field3"
-          label="Field 3"
-          value={formData.field3}
-          onChange={handleChange}
-          fullWidth
-        />
-        <Button type="submit">Submit</Button>
-      </form>
-    </Paper>
+    <Dialog open={open} onClose={onClose} fullWidth>
+      <DialogTitle>
+        {editingData
+          ? editingData.id === 0
+            ? "Copy Data"
+            : "Edit Data"
+          : "Create Data"}
+      </DialogTitle>
+      <DialogContent>
+        <form onSubmit={handleSubmit}>
+          <TextField
+            name="name"
+            label="Name"
+            defaultValue={editingData?.name || ""}
+            fullWidth
+            required
+            sx={{ mt: 2, mb: 2 }}
+          />
+          <TextField
+            name="field1"
+            label="Field 1"
+            defaultValue={editingData?.field1 || ""}
+            fullWidth
+            required
+            sx={{ mb: 2 }}
+          />
+          <TextField
+            name="field2"
+            label="Field 2"
+            defaultValue={editingData?.field2 || ""}
+            fullWidth
+            required
+            sx={{ mb: 2 }}
+          />
+          <TextField
+            name="field3"
+            label="Field 3"
+            defaultValue={editingData?.field3 || ""}
+            fullWidth
+            required
+            sx={{ mb: 2 }}
+          />
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "flex-end",
+              mt: 2,
+            }}
+            gap={2}
+          >
+            <Button type="submit" variant="contained" color="primary">
+              {editingData && editingData.id === 0
+                ? "Save Copy"
+                : editingData
+                ? "Update"
+                : "Create"}
+            </Button>
+            <Button onClick={onClose} variant="contained" color="inherit">
+              Close
+            </Button>
+          </Box>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 };
 

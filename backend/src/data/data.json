@@ -38,21 +38,5 @@
     "field3": "Value 5C",
     "id": 1736946904040,
     "timestamp": "2025-01-15T13:15:04.040Z"
-  },
-  {
-    "name": "Jack Daniel",
-    "field1": "Value 6A",
-    "field2": "Value 6B",
-    "field3": "Value 6C",
-    "id": 1736947944390,
-    "timestamp": "2025-01-15T13:32:53.532Z"
-  },
-  {
-    "name": "Clin Ton",
-    "field1": "Value 7A",
-    "field2": "Value 7B",
-    "field3": "Value 7C",
-    "id": 1736948038944,
-    "timestamp": "2025-01-15T13:33:58.944Z"
   }
 ]
