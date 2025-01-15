@@ -1,8 +1,8 @@
 import React from "react";
-import StatusTable from "../components/StatusTable";
+import StatusGrid from "../components/StatusGrid";
 
 const StatusPage: React.FC = () => {
-  return <StatusTable />;
+  return <StatusGrid />;
 };
 
 export default StatusPage;
