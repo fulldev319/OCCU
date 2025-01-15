@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { TextField, Button, Paper } from "@mui/material";
-import { createData, updateData } from "../services/api";
+import { createData, updateData, fetchAllData } from "../services/api";
 
 interface DataFormProps {
   data?: any;
@@ -11,6 +11,7 @@ const DataForm: React.FC<DataFormProps> = ({ data, onSubmit }) => {
   const [formData, setFormData] = useState(
     data || { name: "", field1: "", field2: "", field3: "" }
   );
+  const [error, setError] = useState<string>("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -19,6 +20,16 @@ const DataForm: React.FC<DataFormProps> = ({ data, onSubmit }) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    const allData = await fetchAllData();
+    const isNameDuplicate = allData.some(
+      (item: any) => item.name === formData.name && item.id !== data?.id
+    );
+
+    if (isNameDuplicate) {
+      setError("Name must be unique.");
+      return;
+    }
+
     if (data) {
       await updateData(data.id, formData);
     } else {
@@ -36,6 +47,8 @@ const DataForm: React.FC<DataFormProps> = ({ data, onSubmit }) => {
           value={formData.name}
           onChange={handleChange}
           fullWidth
+          error={!!error}
+          helperText={error}
         />
         <TextField
           name="field1"
