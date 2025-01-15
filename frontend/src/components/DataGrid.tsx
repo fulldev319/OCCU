@@ -16,21 +16,18 @@ import {
 } from "../services/api";
 import DataCard from "./DataCard";
 import DataForm from "./DataForm";
-
-export interface Data {
-  id: number;
-  name: string;
-  field1: string;
-  field2: string;
-  field3: string;
-  timestamp: string;
-}
+import ComparisonDialog from "./ComparisonDialog";
+import { Data } from "../services/type";
 
 const DataGrid: React.FC = () => {
   const [dataList, setDataList] = useState<Data[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isDialogOpen, setDialogOpen] = useState<boolean>(false);
   const [editingData, setEditingData] = useState<Data | null>(null);
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [comparisonData, setComparisonData] = useState<[Data, Data] | null>(
+    null
+  );
 
   useEffect(() => {
     const getData = async () => {
@@ -79,6 +76,33 @@ const DataGrid: React.FC = () => {
     setDataList((prev) => prev.filter((item) => item.id !== id));
   };
 
+  const handleSelect = (id: number) => {
+    setSelectedIds((prev) => {
+      if (prev.includes(id)) {
+        return prev.filter((itemId) => itemId !== id);
+      } else if (prev.length < 2) {
+        return [...prev, id];
+      }
+      return prev;
+    });
+  };
+
+  const handleCompare = () => {
+    if (selectedIds.length === 2) {
+      const [first, second] = selectedIds.map((id) =>
+        dataList.find((item) => item.id === id)
+      );
+      if (first && second) {
+        setComparisonData([first, second]);
+      }
+    }
+  };
+
+  const handleComparisonClose = () => {
+    setComparisonData(null);
+    setSelectedIds([]);
+  };
+
   const filteredData = dataList.filter(
     (data) =>
       data.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -118,6 +142,15 @@ const DataGrid: React.FC = () => {
         >
           Create Data
         </Button>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={handleCompare}
+          disabled={selectedIds.length !== 2}
+          sx={{ minWidth: "200px", minHeight: "56px" }}
+        >
+          Compare Selected
+        </Button>
       </Box>
       <Grid container spacing={3}>
         {filteredData.map((data) => (
@@ -127,6 +160,8 @@ const DataGrid: React.FC = () => {
               onEdit={(data) => handleDialogOpen(data)}
               onCopy={(data) => handleDialogOpen(data, true)}
               onDelete={handleDelete}
+              isSelected={selectedIds.includes(data.id)}
+              onSelect={handleSelect}
             />
           </Grid>
         ))}
@@ -136,6 +171,11 @@ const DataGrid: React.FC = () => {
         onClose={handleDialogClose}
         onSubmit={handleFormSubmit}
         editingData={editingData}
+      />
+      <ComparisonDialog
+        open={!!comparisonData}
+        onClose={handleComparisonClose}
+        comparisonData={comparisonData}
       />
     </Box>
   );

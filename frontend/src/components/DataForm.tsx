@@ -7,7 +7,7 @@ import {
   DialogContent,
   Box,
 } from "@mui/material";
-import { Data } from "./DataGrid";
+import { Data } from "../services/type";
 
 interface DataFormProps {
   open: boolean;

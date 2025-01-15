@@ -1,12 +1,21 @@
 import React from "react";
-import { Paper, Typography, Button, Box } from "@mui/material";
-import { Data } from "./DataGrid";
+import {
+  Paper,
+  Typography,
+  Button,
+  Box,
+  Checkbox,
+  FormControlLabel,
+} from "@mui/material";
+import { Data } from "../services/type";
 
 interface DataCardProps {
   data: Data;
   onEdit: (data: Data) => void;
   onCopy: (data: Data) => void;
   onDelete: (id: number) => void;
+  isSelected: boolean;
+  onSelect: (id: number) => void;
 }
 
 const DataCard: React.FC<DataCardProps> = ({
@@ -14,6 +23,8 @@ const DataCard: React.FC<DataCardProps> = ({
   onEdit,
   onCopy,
   onDelete,
+  isSelected,
+  onSelect,
 }) => {
   return (
     <Paper
@@ -23,6 +34,8 @@ const DataCard: React.FC<DataCardProps> = ({
         textAlign: "center",
         borderRadius: "8px",
         transition: "transform 0.3s",
+        backgroundColor: isSelected ? "#f0f8ff" : "inherit", // Highlight selected card
+        border: isSelected ? "2px solid #1976d2" : "none", // Add border for selected
         "&:hover": {
           transform: "scale(1.05)",
         },
@@ -42,17 +55,27 @@ const DataCard: React.FC<DataCardProps> = ({
           justifyContent: "space-evenly",
         }}
       >
+        <FormControlLabel
+          control={
+            <Checkbox
+              checked={isSelected}
+              onChange={() => onSelect(data.id)} // Trigger selection on change
+            />
+          }
+          label=""
+          sx={{ mt: 1 }}
+        />
         <Button size="small" onClick={() => onEdit(data)} sx={{ mt: 1 }}>
           Edit
         </Button>
-        <Button size="small" onClick={() => onCopy(data)} sx={{ mt: 1, ml: 1 }}>
+        <Button size="small" onClick={() => onCopy(data)} sx={{ mt: 1 }}>
           Copy
         </Button>
         <Button
           size="small"
           color="error"
           onClick={() => onDelete(data.id)}
-          sx={{ mt: 1, ml: 1 }}
+          sx={{ mt: 1 }}
         >
           Delete
         </Button>
